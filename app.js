@@ -7,6 +7,7 @@ canvas.height = innerHeight;
 let circleMovementRadius = 0;
 let isMouseMove = false;
 let hasTrail = true;
+let ischangingColor = true;
 
 var gui = new dat.GUI();
 const startXrange = { startXrange: 0 };
@@ -30,6 +31,25 @@ const trail = gui
   .listen()
   .onChange(function () {
     hasTrail = !hasTrail;
+  });
+
+const colorParameters = { color: "#187cdb" };
+
+const updateColor = () => {
+  console.log(colorParameters.color);
+};
+
+gui.addColor(colorParameters, "color").onChange(updateColor);
+
+const changeColorParameters = {
+  changeColor: true,
+};
+const changeColor = gui
+  .add(changeColorParameters, "changeColor")
+  .name("changeColor")
+  .listen()
+  .onChange(function () {
+    ischangingColor = !ischangingColor;
   });
 const movementParameters = {
   nothing: true,
@@ -133,8 +153,11 @@ const generateParticles = () => {
         Math.sin(time * Math.PI * 2) * circleMovementRadius +
         Math.sin(rad * i) * startYrange.startYrange;
     }
+    const color = ischangingColor
+      ? `hsl(${Math.abs(realHue * 360)}, 50%, 50%)`
+      : colorParameters.color;
     particles.push(
-      new Particle(x, y, `hsl(${Math.abs(realHue * 360)}, 50%, 50%)`, {
+      new Particle(x, y, color, {
         x: Math.cos(rad * i),
         y: Math.sin(rad * i),
       })
